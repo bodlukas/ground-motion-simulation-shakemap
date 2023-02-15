@@ -6,17 +6,25 @@ from openquake.hazardlib.contexts import RuptureContext
 
 class Sites(object):
     def __init__(self, df: pd.DataFrame, column_names: list):
-        self.df = df
         self.mesh = Mesh(df[column_names[0]].values, 
                          df[column_names[1]].values, 
                          depths=None)
         self.n_sites = len(df)
         self.vs30 = df[column_names[2]].values
 
+    def get_bbox(self):
+        bbox = [self.mesh.lons.max(), self.mesh.lons.min(), 
+                self.mesh.lats.max(), self.mesh.lats.min()]
+        lons_bbox = [bbox[0], bbox[0], bbox[1], bbox[1], bbox[0]]
+        lats_bbox = [bbox[2], bbox[3], bbox[3], bbox[2], bbox[2]]
+        return np.array(lons_bbox), np.array(lats_bbox)
+
 class Stations(Sites):
     def __init__(self, df: pd.DataFrame, column_names: list, im_string: str):
         super().__init__(df, column_names)
         self.im_string = im_string
+        self.df = df
+    
     def get_recordings(self):
         # computes the geometric mean (average horizontal) of the recorded im
         col = self.im_string.lower()
@@ -60,7 +68,7 @@ class Shakemap(object):
         gmm_results = self.gmm.get_mean_and_std(self.rupture, self.stations)
         self.phi = np.mean(gmm_results['phi'])
         self.tau = np.mean(gmm_results['tau'])
-        C_SS = self.scm.get_correlation_matrix(self.stations.mesh, full_cov = True)
+        C_SS = self.scm.get_correlation_matrix(self.stations, full_cov = True)
         jitter_m = np.zeros_like(C_SS)
         np.fill_diagonal(jitter_m, self.jitter) 
         self.inv_C_SS = np.linalg.inv(C_SS + jitter_m)
@@ -75,12 +83,12 @@ class Shakemap(object):
 
     def predict_logIM(self, sites, conditional = True, full_cov = True):
         gmm_results = self.gmm.get_mean_and_std(self.rupture, sites)
-        C_TT = self.scm.get_correlation_matrix(sites.mesh, full_cov = full_cov)
+        C_TT = self.scm.get_correlation_matrix(sites, full_cov = full_cov)
         if conditional is False:
             mean = gmm_results['mu_logIM'][:, None]
             cov_matrix = self.tau**2 + self.phi**2 * C_TT
         else:
-            C_TS = self.scm.get_correlation_matrix(sites.mesh, self.stations.mesh)
+            C_TS = self.scm.get_correlation_matrix(sites, self.stations)
             mean = (gmm_results['mu_logIM'][:, None] + self.xiB + 
                     (C_TS @ (self.inv_C_SS @ self.residuals) ) )
             if full_cov:
