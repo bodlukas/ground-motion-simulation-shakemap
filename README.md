@@ -2,6 +2,8 @@
 
 **Example for the 2023 earthquake at the border of Turkey and Syria** 
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7646888.svg)](https://doi.org/10.5281/zenodo.7646888)
+
 ShakemapSim is a user-friendly tool to generate spatially correlated fields of ground-motion intensity measures conditional on available recordings from a seismic network. This is particularly useful for validation and development of models for damage, loss and recovery predictions using data gathered after an event. 
 
 **Quick start** Open the notebook [ShakemapSim_Example.ipynb](ShakemapSim_Example.ipynb) on a hosted Jupyter notebook service (e.g., Google Colab). It does not require any local python setup and you can immediately start to customize the models and perform the computations yourself. It explains how to: 
