@@ -2,45 +2,37 @@ import numpy as np
 import pandas as pd
 from openquake.hazardlib import imt
 from openquake.hazardlib.geo.geodetic import geodetic_distance
+from openquake.hazardlib.source.rupture import BaseRupture
 import math
 
 class SpatialCorrelationModel(object):
-    """
-
-    Base class for spatial correlation models of within-event residuals 
+    """ Base class for spatial correlation models of within-event residuals 
     of ground-motion intensity measures
-
-    :param im:
-        string that indicates intensity measure (i.e. 'PGA' or 'SA(1.0)')
-        should be compatible with openquake intensity measure names
-
     """
-    def __init__(self, im):
-        self.im = imt.from_string(im)
+    def __init__(self, im_string: str):
+        """
+        Args:
+            im_string (str): Indicate for which im to compute correlations.
+        """        
+        self.im = imt.from_string(im_string)
 
-    def get_euclidean_distance_matrix(self, sites1, sites2=None, full_cov=True):
-        ''' 
-        Computes the Euclidean distance between each site in sites1 and each
-        site in site2
+    def get_euclidean_distance_matrix(self, sites1, sites2=None, 
+                                      full_cov: bool=True):
+        """Computes Euclidean distance matrix
 
-        Parameters
-        ----------
-        sites1 : Sites object (see shakemap.py)
-            n sites
-        sites2 : Sites object (see shakemap.py)
-            m sites
-            if None: compute distances within sites 1
-        sites2 : Sites object (see shakemap.py)
-            m sites
-        full_cov : bool
-            If False computes only the diagonal of the distance matrix (zeros)
+        Computes the distance from each site in sites1 to every other site in 
+        site 1, or, if sites2 is provided, to every site in sites2.
 
-        Returns
-        -------
-        distances : np.array
-            if sites2 is None: distance matrix of sites1 with themselves (dim n x n)
-            else: distance matrix between sites1 and sites2 (dim n x m)
-        '''
+        Args:
+            sites1 (Sites): Sites for which to compute distance matrix
+            sites2 (Sites, optional): If not None distance matrix between
+                sites1 and sites2 is computed. Defaults to None.
+            full_cov (bool, optional): Flag whether to compute the full 
+                distance matrix or only the diagonal (zeros). Defaults to True.
+
+        Returns:
+            distances (np.array): Distance matrix
+        """
         lons1 = sites1.mesh.lons.reshape(-1,1); lats1 = sites1.mesh.lats.reshape(-1,1)
         if sites2 is None:
             if full_cov:
@@ -52,27 +44,30 @@ class SpatialCorrelationModel(object):
             distances = geodetic_distance(lons1, lats1, lons2, lats2)
         return distances
     
-class HeresiMiranda2019(SpatialCorrelationModel):
+class HeresiMiranda2019(SpatialCorrelationModel): 
     '''
-    
     Implements model: 
         Heresi P. and Miranda E. (2019): "Uncertainty in intraevent spatial 
         correlation of elastic pseudo‑acceleration spectral ordinates"
         Bulletin of Earthquake Engineering, doi: 10.1007/s10518-018-0506-6
-
-    Additional inputs:
-        - mode: 'median' (default) or 'mean'
-
     '''
-    def __init__(self, im, mode='median'):
-        super().__init__(im)
+    def __init__(self, im_string: str, mode: str = 'median'):
+        """
+        Args:
+            im_string (str): Indicate for which im to compute correlations.
+            mode (str, optional): Choose 'mean' or 'median' parameter beta. 
+                Defaults to 'median'.
+        """        
+        super().__init__(im_string)
+        if mode not in ['mean', 'median']:
+            raise ValueError('mode has to be either mean or median')
         self.T = self.im.period
         self.mode = mode
+        self.beta = self._get_parameter_beta()
 
     def get_correlation_matrix(self, sites1, sites2=None, full_cov=True):
         dist_mat = self.get_euclidean_distance_matrix(sites1, sites2, full_cov)
-        beta = self._get_parameter_beta()
-        return np.exp( - np.power(dist_mat / beta, 0.55) )
+        return np.exp( - np.power(dist_mat / self.beta, 0.55) )
     
     def _get_parameter_beta(self):
         if self.T < 1.37:
@@ -107,16 +102,16 @@ class EspositoIervolino2012esm(SpatialCorrelationModel):
     def __init__(self, im):
         super().__init__(im)
         self.T = self.im.period
+        self.corr_range = self._get_parameter_range()
 
     def get_correlation_matrix(self, sites1, sites2=None, full_cov=True):
         dist_mat = self.get_euclidean_distance_matrix(sites1, sites2, full_cov)
-        range = self._get_parameter_range()
-        return np.exp(-3 * dist_mat / range)
+        return np.exp(-3 * dist_mat / self.corr_range)
     
     def _get_parameter_range(self):
-        if self.T == 0: range = 13.5
-        else: range = 11.7 + 12.7 * self.T
-        return range
+        if self.T == 0: corr_range = 13.5
+        else: corr_range = 11.7 + 12.7 * self.T
+        return corr_range
 
 # Parameters for Model of BodenmannEtAl
 params_BodenmannEtAl = {0.01: {'LE': 16.4, 'gammaE': 0.36, 'LA': 24.9, 'LS': 171.2, 'w': 0.84},
@@ -137,14 +132,16 @@ class BodenmannEtAl2022(SpatialCorrelationModel):
         spatial ground-motion correlation models using Bayesian inference"
         Natural Hazards and Earth System Sciences (in review), doi: 10.5194/nhess-2022-267
 
-    Additional inputs:
-        - rupture: OpenQuake BaseRupture object
-
     Note: For PGA, we take the parameters obtained for SA(T=0.01s).
     '''
 
-    def __init__(self, im: str, rupture):
-        super().__init__(im)
+    def __init__(self, im_string: str, rupture: BaseRupture):
+        """
+        Args:
+            im_string (str): Indicate for which im to compute correlations.
+            rupture (BaseRupture): Openquake rupture instance
+        """  
+        super().__init__(im_string)
         self.T = self.im.period
         self.rupture = rupture
 
@@ -165,13 +162,8 @@ class BodenmannEtAl2022(SpatialCorrelationModel):
 
     def get_angular_distance_matrix(self, sites1, sites2=None, full_cov=True):
         '''
-        Computes matrix with difference in epicentral azimuth values of sites:
-
-            if sites2 is None: distance matrix of sites1 with themselves
-            else: distance matrix between sites1 and sites2
-
-            if full_cov is True: Returns full distance matrix
-            else: Returns only the diagonal (zeros)
+        Computes matrix with differences in epicentral azimuth values of sites.
+        See also doc of get_euclidean_distance_matrix.
         '''
         azimuths1 = np.radians(
             self.compute_epicentral_azimuth(sites1.mesh.lons, sites1.mesh.lats))
@@ -193,13 +185,8 @@ class BodenmannEtAl2022(SpatialCorrelationModel):
     
     def get_soil_dissimilarity_matrix(self, sites1, sites2=None, full_cov=True):
         '''
-        Computes the absolute difference in vs30 values between sites:
-
-            if sites2 is None: distance matrix of all sites in sites1
-            else: distance matrix between sites1 and sites2 
-
-            if full_cov is True: Returns full distance matrix
-            else: Returns only the diagonal (zeros)
+        Computes the absolute difference in vs30 values between sites.
+        See also doc of get_euclidean_distance_matrix.
         '''
         vs301 = sites1.vs30.reshape(-1,1)
 
