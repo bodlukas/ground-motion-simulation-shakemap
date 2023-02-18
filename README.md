@@ -14,6 +14,8 @@ ShakemapSim is a user-friendly tool to generate spatially correlated fields of g
 
 The tool uses the [openquake engine](https://github.com/gem/oq-engine#openquake-engine) for geo-computations and implementations of ground-motion models. In the provided example we import rupture information and station data (including recorded amplitudes) from the [USGS shakemap system](https://earthquake.usgs.gov/data/shakemap/). 
 
+![alt text](https://github.com/bodlukas/ground-motion-simulation-shakemap/blob/main/data/ShakemapSim.png)
+
 ### Local installation
 The required dependencies for a local setup are listed in the `environment.yml` file. I recommend to create a virtual (mini-)conda environment. 
 
