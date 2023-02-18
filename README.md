@@ -19,6 +19,8 @@ The tool uses the [openquake engine](https://github.com/gem/oq-engine#openquake-
 
 ![alt text](https://github.com/bodlukas/ground-motion-simulation-shakemap/blob/main/data/ShakemapSim.png)
 
+The tool was developed at the Department of Civil, Environmental and Geomatic Engineering at ETH Zürich in the research group of [Prof. Bozidar Stojadinovic](https://stojadinovic.ibk.ethz.ch/). 
+
 ### Local installation
 The required dependencies for a local setup are listed in the `environment.yml` file. I recommend to create a virtual (mini-)conda environment. 
 
@@ -26,6 +28,9 @@ The required dependencies for a local setup are listed in the `environment.yml` 
 The current implementation only considers spatial correlation and no spatial cross-correlation. Therefore, it can only be used to simulate and predict the same intensity measure (e.g., PGA) at multiple sites.
 
 **Important** Note that the provided [example data sets](data/) are only for illustrative purposes. Users should definitely check for updated rupture and station data from this [event](https://earthquake.usgs.gov/earthquakes/eventpage/us6000jllz/shakemap/metadata). The provided vs30 values were retrieved from [USGS](https://earthquake.usgs.gov/data/vs30/), and are based on geographic slope. Users should carefully assess whether these estimates are representative for that region. 
+
+### Acknowledgments
+We gratefully acknowledge support from the ETH Risk Center ("DynaRisk", Grant Nr. 395 2018-FE-213). 
 
 ### Licence
 The code is licensed under the Apache2.0 license. Feel free to use it based on the terms and conditions listed in the LICENSE.md file and reference the doi stated above. I intend this code to be used for NON-COMMERCIAL uses, if you'd like to use it for commercial uses, please contact Lukas Bodenmann via bodenmann (at) ibk.baug.ethz.ch .
