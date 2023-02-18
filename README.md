@@ -19,7 +19,7 @@ The tool uses the [openquake engine](https://github.com/gem/oq-engine#openquake-
 
 ![alt text](https://github.com/bodlukas/ground-motion-simulation-shakemap/blob/main/data/ShakemapSim.png)
 
-The tool was developed at the Department of Civil, Environmental and Geomatic Engineering at ETH Zürich in the research group of [Prof. Bozidar Stojadinovic](https://stojadinovic.ibk.ethz.ch/). 
+The tool was developed by the research group of [Prof. Bozidar Stojadinovic](https://stojadinovic.ibk.ethz.ch/) at the Department of Civil, Environmental and Geomatic Engineering at ETH Zürich. 
 
 ### Local installation
 The required dependencies for a local setup are listed in the `environment.yml` file. I recommend to create a virtual (mini-)conda environment. 
