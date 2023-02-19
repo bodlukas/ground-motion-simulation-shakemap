@@ -33,7 +33,7 @@ The current implementation only considers spatial correlation and no spatial cro
 - [modules](modules/) contains the main objects, functions and methods to perform the computation including (relatively) rich documentation.
 - [data](data/) contains some example data sets used to explain the method. When working with these data sets, please take into account the notes from the section above!
 - [ShakemapSim_Example.ipynb](ShakemapSim_Example.ipynb) is the main notebook that explains the workflow on the example of the 2023 M7.8 earthquake at the border of Turkey and Syria. As mentioned above, the notebook can be opened in colab. 
-- [theoretical_background.md](theoretical_background.md) provides a short mathematical overview on ground-motion models, spatial correlation models and the shakemap algorithm.
+- [theoretical_background.ipynb](theoretical_background.ipynb) provides a short mathematical overview on ground-motion models, spatial correlation models and the shakemap algorithm.
 - [test.ipynb](test.ipynb) contains a short script that uses simulated data to test the implemented shakemap algorithm.
 - [utils.py](utils.py) contains several functions to import rupture and station information from USGSs ShakeMap system.
 
