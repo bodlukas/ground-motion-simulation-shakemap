@@ -15,23 +15,30 @@ If you use this tool in your work please please cite it as:
 3. specify sites at which we would like to predict ground-motion IMs,
 4. use **ShakemapSim** to predict and sample ground-motion IMs. 
 
-The tool uses the [openquake engine](https://github.com/gem/oq-engine#openquake-engine) for geo-computations and implementations of ground-motion models. In the provided example we import rupture information and station data (including recorded IMs) from the [USGS shakemap system](https://earthquake.usgs.gov/data/shakemap/). 
+![Schema](https://github.com/bodlukas/ground-motion-simulation-shakemap/blob/main/data/ShakemapSim.png)
 
-![alt text](https://github.com/bodlukas/ground-motion-simulation-shakemap/blob/main/data/ShakemapSim.png)
+The tool uses the [openquake engine](https://github.com/gem/oq-engine#openquake-engine) for geo-computations and implementations of ground-motion models. In the provided example we import rupture information and station data (including recorded IMs) from the [USGS shakemap system](https://earthquake.usgs.gov/data/shakemap/). 
 
 The tool was developed by the research group of [Prof. Bozidar Stojadinovic](https://stojadinovic.ibk.ethz.ch/) at the Department of Civil, Environmental and Geomatic Engineering at ETH Zürich. 
 
 ### Local installation
-The required dependencies for a local setup are listed in the `environment.yml` file. I recommend to create a virtual (mini-)conda environment. 
+The required dependencies for a local setup are listed in the `environment.yml` file. We recommend to first create a new virtual (mini-)conda environment.
 
 ### Limitation
 The current implementation only considers spatial correlation and no spatial cross-correlation. Therefore, it can only be used to simulate and predict the same intensity measure (e.g., PGA) at multiple sites.
 
-**Important** Note that the provided [example data sets](data/) are only for illustrative purposes. Users should definitely check for updated rupture and station data from this [event](https://earthquake.usgs.gov/earthquakes/eventpage/us6000jllz/shakemap/metadata). The provided vs30 values were retrieved from [USGS](https://earthquake.usgs.gov/data/vs30/), and are based on geographic slope. Users should carefully assess whether these estimates are representative for that region. 
+>**_Important_** Note that the provided [example data sets](data/) are only for illustrative purposes. Users should definitely check for updated rupture and station data from this [event](https://earthquake.usgs.gov/earthquakes/eventpage/us6000jllz/shakemap/metadata). The provided vs30 values were retrieved from [USGS](https://earthquake.usgs.gov/data/vs30/), and are based on geographic slope. Users should carefully assess whether these estimates are representative for that region. 
+
+### Structure
+- [modules](modules/) contains the main objects, functions and methods to perform the computation including (relatively) rich documentation.
+- [data](data/) contains some example data sets used to explain the method. When working with these data sets, please take into account the notes from the section above!
+- [ShakemapSim_Example.ipynb](ShakemapSim_Example.ipynb) is the main notebook that explains the workflow on the example of the 2023 M7.8 earthquake at the border of Turkey and Syria. As mentioned above, the notebook can be opened in colab. 
+- [theoretical_background.md](theoretical_background.md) provides a short mathematical overview on ground-motion models, spatial correlation models and the shakemap algorithm.
+- [test.ipynb](test.ipynb) contains a short script that uses simulated data to test the implemented shakemap algorithm.
+- [utils.py](utils.py) contains several functions to import rupture and station information from USGSs ShakeMap system.
 
 ### Acknowledgments
 We gratefully acknowledge support from the ETH Risk Center ("DynaRisk", Grant Nr. 395 2018-FE-213). 
 
 ### Licence
 The code is licensed under the Apache2.0 license. Feel free to use it based on the terms and conditions listed in the LICENSE.md file and reference the doi stated above. I intend this code to be used for NON-COMMERCIAL uses, if you'd like to use it for commercial uses, please contact Lukas Bodenmann via bodenmann (at) ibk.baug.ethz.ch .
-
