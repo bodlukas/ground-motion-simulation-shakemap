@@ -79,7 +79,7 @@ class HeresiMiranda2019(SpatialCorrelationModel):
             return Med_b
         elif self.mode == 'mean':
             Std_b = (4.63e-3 * self.T*self.T + 0.028 * self.T + 0.713)
-            return np.exp( np.log(Med_b) + 0.5 * Std_b)
+            return np.exp( np.log(Med_b) + 0.5 * Std_b**2)
 
 class EspositoIervolino2012esm(SpatialCorrelationModel):
     '''
