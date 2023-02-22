@@ -41,4 +41,4 @@ The current implementation only considers spatial correlation and no spatial cro
 We gratefully acknowledge support from the ETH Risk Center ("DynaRisk", Grant Nr. 395 2018-FE-213). 
 
 ### Licence
-The code is licensed under the Apache2.0 license. Feel free to use it based on the terms and conditions listed in the LICENSE.md file and reference the doi stated above. I intend this code to be used for NON-COMMERCIAL uses, if you'd like to use it for commercial uses, please contact Lukas Bodenmann via bodenmann (at) ibk.baug.ethz.ch .
+The code written by us is licensed under the GNU Affero General Public License v3.0 (AGPL 3.0) license. Feel free to use it based on the terms and conditions listed in the LICENSE file and reference the doi stated above. I intend this code to be used for NON-COMMERCIAL uses, if you'd like to use it for commercial uses, please contact Lukas Bodenmann via bodenmann (at) ibk.baug.ethz.ch . Remember that the workflow heavily relies on OpenQuake, which is also licensed under the AGPL 3.0 license.
