@@ -7,29 +7,32 @@ from openquake.hazardlib.geo.mesh import Mesh
 from openquake.hazardlib.geo.geodetic import point_at, geodetic_distance
 
 #---
-# Finite Fault: Version 2 -> https://earthquake.usgs.gov/earthquakes/eventpage/us6000jllz/finite-fault 
+# Finite Fault: Version 4 -> https://earthquake.usgs.gov/earthquakes/eventpage/us6000jllz/finite-fault 
 # Modelled as three segments, each with a planar surface. 
 # Read from map top_left point and compute the other corner points with given rake and distance.
 # Validated that the resulting dip is the same.
 #---
 
-def get_finite_fault():
-    rup_geom = dict()
-    rup_geom['top_left'] = [[36.932, 37.104, 0], [36.840, 37.376, 0], [36.071, 36.076]]
-    rup_geom['strike'] = [28, 60, 25]
-    rup_geom['length_1'] = [55.952, 191.856, 160.081]  
-    rup_geom['length_2'] = [3.481, 3.490, 10.464]
+finite_fault_geom_v4 = dict()
+finite_fault_geom_v4['top_left'] = [[36.918, 37.084, 0], [36.825, 37.370, 0], [36.053, 36.073, 0]]
+finite_fault_geom_v4['length_1'] = [54.975, 189.859, 160.133]  
+finite_fault_geom_v4['length_2'] = [3.495, 3.491, 10.503]
+finite_fault_geom_v4['strike'] = [28, 60, 25]
+finite_fault_geom_v4['depth'] = [40, 40, 40]
 
+def get_finite_fault():
+    rup_geom = finite_fault_geom_v4
+    num_segments = len(rup_geom['strike'])
     coors = []
-    for i in range(3):
+    for i in range(num_segments):
         top_left = rup_geom['top_left'][i]
         top_right = point_at(top_left[0], top_left[1], rup_geom['strike'][i], rup_geom['length_1'][i])
         bottom_left = point_at(top_left[0], top_left[1], rup_geom['strike'][i]+90, rup_geom['length_2'][i])
         bottom_right = point_at(bottom_left[0], bottom_left[1], rup_geom['strike'][i], rup_geom['length_1'][i])
         c_temp = [[top_left[0], top_left[1], 0],
                 [top_right[0], top_right[1], 0],
-                [bottom_right[0], bottom_right[1], 40],
-                [bottom_left[0], bottom_left[1], 40],
+                [bottom_right[0], bottom_right[1], rup_geom['depth'][i]],
+                [bottom_left[0], bottom_left[1], rup_geom['depth'][i]],
                 [top_left[0], top_left[1], 0]]
         
         coors.append(c_temp)
