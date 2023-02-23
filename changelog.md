@@ -37,6 +37,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [v1.0] - 2023-02-18
 - Initial version
 
-[v1.1]: https://github.com/bodlukas/ground-motion-simulation-shakemap/compare/v1.0...v1.2
+[v1.2]: https://github.com/bodlukas/ground-motion-simulation-shakemap/compare/v1.0...v1.2
 [v1.1]: https://github.com/bodlukas/ground-motion-simulation-shakemap/compare/v1.0...v1.1
 [v1.0]: https://github.com/bodlukas/ground-motion-simulation-shakemap/releases/tag/v1.0 
