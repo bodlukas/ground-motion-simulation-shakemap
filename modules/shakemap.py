@@ -70,22 +70,35 @@ class Stations(Sites):
         self.im_string = im_string
         self.df = df
     
-    def get_recordings(self):
-        '''Computes the geometric mean (average horizontal) of the recorded im
+    def get_recordings(self, im_definition: str='geometric_mean'):
+        '''Return "recorded" logarithmic im from dataframe
 
+        This function expects that the provided im values in the dataframe
+        are in units of g.
+        
+        If im_definition='geometric_mean', it computes the geometric mean
+        (average horizontal) of the "recorded" im.
         The column names that contain the two horizontal directions builds on 
         name conventions of the USGS stationlist.json file and should end with 
         E and N, respectively. For example: 'sa(1.0)_E' and 'sa(1.0)_N'.
 
-        Adapt this if you choose a ground-motion model which was derived for 
-        another metric (such as RotD50).
+        If im_definition='rotD50', there should be a column in the dataframe
+        ending with rotD50. For example: 'sa(1.0)_rotD50'
+
+        Args:
+            im_definition (str): One of 'geometric_mean' and 'rotD50'
 
         Returns:
             log_recordings (np.array): Logarithmic geometric mean of recorded im
         '''
         # computes the geometric mean (average horizontal) of the recorded im
         col = self.im_string.lower()
-        recordings = np.sqrt(self.df[col + '_E'] * self.df[col + '_N']).values
+        if im_definition == 'geometric_mean':
+            recordings = np.sqrt(self.df[col + '_E'] * self.df[col + '_N']).values
+        elif im_definition == 'rotD50':
+            recordings = self.df[col + '_rotD50'].values
+        else:
+            raise ValueError(f"Provided 'im_definition' {im_definition} is invalid.")
         return np.log(recordings)
 
 class GMM(object):
